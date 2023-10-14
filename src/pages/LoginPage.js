@@ -7,7 +7,6 @@ import * as message from "../components/messages/index";
 const LoginPage = () => {
   const [mode, setMode] = useState("login");
   const [gif, setGif] = useState(lightGif);
-  const [showForm, setShowForm] = useState("none");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const loginImgClass = "w-1/2 h-full bg-transparent absolute top-0 left-0";

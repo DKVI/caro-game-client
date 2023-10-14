@@ -2,11 +2,13 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
-    extend: {},
+    extend: {
+      styles: ["./src/css/styles.css"],
+    },
     colors: {
       night: "#476D6A",
       day: "#FBD5A4",
-      light: "#FBD5A4",
+      light: "#f73413",
       dark: "#476D6A",
       xDark: "#1B2D4A",
       oDark: "#729C96",
