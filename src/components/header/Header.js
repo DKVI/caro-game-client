@@ -61,7 +61,10 @@ const Header = () => {
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
-            className="custom-bar w-[200px] pb-3 absolute bg-white right-0 top-[calc(100%+15px)] rounded-md"
+            className="custom-bar w-[200px] pb-3 absolute z-40 bg-white right-0 top-[calc(100%+15px)] rounded-md"
+            style={{
+             boxShadow: "2px 2px 3px #cccc"
+            }}
           >
             <div
               style={{

@@ -5,6 +5,8 @@ const init = {
   xColor: "xDark",
   oColor: "oDark",
   background: "dark.gif",
+  mode: "CPU",
+  player2: "",
 };
 
 const rootReducer = (state = init, action) => {

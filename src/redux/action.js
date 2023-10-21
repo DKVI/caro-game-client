@@ -5,4 +5,18 @@ const changeTheme = (payload) => {
   };
 };
 
-export { changeTheme };
+const setPlayer2Name = (payload) => {
+  return {
+    type: "SET_PLAYER_2_NAME",
+    payload,
+  };
+};
+
+const setMode = (payload) => {
+  return {
+    type: "SET_MODE",
+    payload,
+  };
+};
+
+export { changeTheme, setMode, setPlayer2Name };

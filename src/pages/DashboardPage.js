@@ -14,6 +14,12 @@ const DashboardPage = () => {
     gif === "light.gif" ? lightGif : darkGif
   );
   useEffect(() => {
+    window.onbeforeunload = function () {
+      return "Do you really want to close?";
+    };
+    window.onunload = function () {
+      return "Do you really want to close?";
+    };
     if (!authen.isLogin()) {
       return navigate("/login");
     }
@@ -34,9 +40,7 @@ const DashboardPage = () => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
-      >
-        <ChessBoard />
-      </div>
+      ></div>
     </>
   );
 };

@@ -2,6 +2,8 @@ import { AiFillEyeInvisible } from "react-icons/ai";
 import { AiFillEye } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { LuCircle } from "react-icons/lu";
+import { HiOutlineDesktopComputer } from "react-icons/hi";
+import { LiaUserFriendsSolid } from "react-icons/lia";
 const X = ({ color }) => {
   return (
     <RxCross1
@@ -22,4 +24,11 @@ const O = ({ color }) => {
     />
   );
 };
-export { AiFillEyeInvisible, AiFillEye, X, O };
+export {
+  AiFillEyeInvisible,
+  AiFillEye,
+  X,
+  O,
+  HiOutlineDesktopComputer,
+  LiaUserFriendsSolid,
+};

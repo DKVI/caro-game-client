@@ -36,6 +36,7 @@ const LoginPage = () => {
       registerForm.style.opacity = "1";
     }, 300);
   };
+  useEffect(() => {});
   const clearData = () => {
     setInputUserName("");
     setInputEmail("");
@@ -43,6 +44,18 @@ const LoginPage = () => {
     setInputConfirmPassword("");
     setShowConfirmPassword(false);
     setShowPassword(false);
+  };
+
+  const changePicture = (mode) => {
+    const gifDarkContainer = document.querySelector(".darkGif");
+    const gifLightContainer = document.querySelector(".lightGif");
+    if (mode === "register") {
+      gifLightContainer.style.opacity = "0";
+      gifDarkContainer.style.opacity = "1";
+    } else {
+      gifDarkContainer.style.opacity = "0";
+      gifLightContainer.style.opacity = "1";
+    }
   };
   const clearMessage = (e) => {
     const container = e.target.parentElement;
@@ -193,6 +206,7 @@ const LoginPage = () => {
       setGif(darkGif);
     }
   }, [mode]);
+
   return (
     <div
       className={`${
@@ -210,20 +224,51 @@ const LoginPage = () => {
         }}
       >
         <motion.div
-          className={`${mode === "login" ? loginImgClass : registerImgClass}`}
+          className={`login-img ${
+            mode === "login" ? loginImgClass : registerImgClass
+          }`}
           style={{
-            zIndex: "100",
             transition: "all 0.5s ease-in-out",
-            backgroundImage: `url(${gif})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            zIndex: "100",
+            position: "absolute",
           }}
-        ></motion.div>
+        >
+          <motion.div className="w-full h-full bg-white"></motion.div>
+          <motion.div
+            className="lightGif w-full h-full absolute left-0 top-0 z-20"
+            style={{
+              left: 0,
+              top: 0,
+              transition: "all 0.25s ease-in-out",
+              width: "100%",
+              height: "100%",
+              backgroundImage: `url(${lightGif})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 1,
+            }}
+          ></motion.div>
+          <motion.div
+            className="darkGif w-full h-full absolute left-0 top-0 z-10"
+            style={{
+              left: 0,
+              top: 0,
+              opacity: 1,
+              transition: "all 0.25s ease-in-out",
+              width: "100%",
+              height: "100%",
+              backgroundImage: `url(${darkGif})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          ></motion.div>
+        </motion.div>
         <div
           className="h-full w-1/2 p-5 flex register-form"
           style={{
-            transition: "all 0.5s ease-in-out",
+            transition: "all 0.25s ease-in-out",
           }}
         >
           <div className="m-auto flex flex-col gap-4 w-2/3">
@@ -335,8 +380,13 @@ const LoginPage = () => {
               <h4>You already have an account? </h4>
               <button
                 onClick={() => {
+                  changePicture();
                   clearAllMessage();
-                  setMode("login");
+                  setMode((prev) => {
+                    prev = "login";
+                    changePicture(prev);
+                    return prev;
+                  });
                   moveLogin();
                   setTimeout(() => {
                     clearData();
@@ -352,7 +402,7 @@ const LoginPage = () => {
         <div
           className=" h-full w-1/2 p-5 login-form"
           style={{
-            transition: "all 0.5s ease-in-out",
+            transition: "all 0.25s ease-in-out",
           }}
         >
           <div className="m-auto flex flex-col gap-6 w-2/3">
@@ -425,7 +475,11 @@ const LoginPage = () => {
               <button
                 onClick={() => {
                   clearAllMessage();
-                  setMode("register");
+                  setMode((prev) => {
+                    prev = "register";
+                    changePicture(prev);
+                    return prev;
+                  });
                   moveRegister();
                   setTimeout(() => {
                     clearData();
