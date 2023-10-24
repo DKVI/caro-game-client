@@ -8,7 +8,7 @@ const SpinnerLoading = () => {
       style={{
         backgroundColor: "rgba(0,0,0,0.5)",
         position: "fixed",
-        top: 0,
+        top: "60px",
         left: 0,
         width: "100%",
         height: "100%",

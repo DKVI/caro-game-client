@@ -52,3 +52,13 @@ body {
 .shadow-custom {
     filter: drop-shadow(2px 2px 2px rgb(199, 198, 198));
 }
+
+.hover-dark:hover {
+    background-color: #476D6A;
+}
+
+
+.hover-light:hover {
+    background-color: #f73413;
+}
+

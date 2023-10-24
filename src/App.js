@@ -14,13 +14,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<LoginPage />} />
         <Route exact path="/login" element={<LoginPage />} />
-        <Route
-          exact
-          path="/dashboard"
-          element={
-            isLogin ? <DashboardPage /> : <Navigate to="/login" replace />
-          }
-        />
+        <Route exact path="/dashboard" element={<DashboardPage />} />
         <Route exact path="/game" element={<GamePage />} />
         <Route exact path="/setting" element={<SettingPage />} />
         <Route path="*" element={<NotFoundPage />} />

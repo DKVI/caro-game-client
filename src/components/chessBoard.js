@@ -3,11 +3,18 @@ import { useSelector } from "react-redux";
 import initializeBoard from "../rules/initBoard";
 import { findBestMove, makeMove } from "../rules/nextMove";
 import getWinner from "../rules/checkWinner";
+import { GetResult } from "./popUpModels";
+import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import * as action from "../redux/action";
 let board = initializeBoard(15);
-
 const ChessBoard = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const idParam = searchParams.get("id");
+  const modeParam = searchParams.get("mode");
   const theme = useSelector((state) => state.theme);
-  console.log(theme);
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [xColor, setXColor] = useState(
     theme === "night" ? "xDarkColor" : "xLightColor"
@@ -19,7 +26,29 @@ const ChessBoard = () => {
   let j = -1;
 
   const [insertMove, setInsertMove] = useState("X");
-  useEffect(() => {});
+  const [winner, setWinner] = useState(0);
+  function isPlace(e) {
+    return e.target.innerHTML ? false : true;
+  }
+  function setAIMove(e) {
+    const { row, col } = findBestMove(1, board);
+    const element = document.getElementById(`${row}_${col}`);
+    board[row][col] = -1;
+    element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
+    // setCurrentPlayer((prev) => {
+    //   prev = -1;
+    //   const winnerPlayer = getWinner(board, prev);
+    //   console.log(winnerPlayer);
+    //   if (winnerPlayer !== 0) {
+    //     localStorage.setItem("break", "true");
+    //     setWinner((prev) => {
+    //       prev = winnerPlayer;
+    //       return prev;
+    //     });
+    //   }
+    //   return prev;
+    // });
+  }
   function setMove(e) {
     let id = e.target.id;
     let [i, j] = id.split("_");
@@ -27,22 +56,41 @@ const ChessBoard = () => {
     if (insertMove === "X") {
       e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
       board[i][j] = 1;
-      setCurrentPlayer((prev) => {
-        prev = 1;
-        console.log(getWinner(board, prev));
-        return prev;
-      });
+      // setCurrentPlayer((prev) => {
+      //   prev = 1;
+      //   const winnerPlayer = getWinner(board, prev);
+      //   console.log(winnerPlayer);
+      //   if (winnerPlayer !== 0) {
+      //     localStorage.setItem("break", "true");
+
+      //     setWinner((prev) => {
+      //       prev = winnerPlayer;
+      //       return prev;
+      //     });
+      //   }
+      //   return prev;
+      // });
     }
   }
-  function handlePlay(e) {
-    const id = e.target.id;
-    console.log(id);
+  function changeTurnAndCheck(turn) {
+    setCurrentPlayer((prev) => {
+      prev = turn;
+      const winnerPlayer = getWinner(board, prev);
+      if (winnerPlayer !== 0) {
+        localStorage.setItem("break", "true");
+        setWinner((prev) => {
+          prev = winnerPlayer;
+          return prev;
+        });
+      }
+      console.log(prev);
+      return prev;
+    });
   }
   useEffect(() => {
     setXColor(theme === "night" ? "xDarkColor" : "xLightColor");
     setOColor(theme === "night" ? "oDarkColor" : "oLightColor");
     const xElements = document.querySelectorAll(".x-element");
-    console.log(xElements);
     Array.from(xElements).forEach((element) => {
       if (element.classList.contains("xDarkColor")) {
         element.classList.remove("xDarkColor");
@@ -63,9 +111,7 @@ const ChessBoard = () => {
       }
     });
   }, [theme]);
-  useEffect(() => {
-    console.log(insertMove);
-  }, [insertMove]);
+
   return (
     <div
       className="w-[calc(100vh-150px)] h-[calc(100vh-150px)]"
@@ -84,31 +130,32 @@ const ChessBoard = () => {
             j = 0;
           }
           return (
-            <div
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{
+                scale: [1, 1.2, 1.2, 1, 1],
+                rotate: [0, 0, 270, 270, 0],
+                borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+                opacity: 1,
+              }}
               key={index}
-              className={"w-full h-full bg-white flex board-element"}
+              className={`w-full h-full bg-white flex board-element ease-in-out] cursor-pointer`}
               onClick={(e) => {
+                if (!isPlace(e)) return;
                 setMove(e);
-                handlePlay(e);
-                console.log(board);
-                const { row, col } = findBestMove(1, board);
-                const element = document.getElementById(`${row}_${col}`);
-                console.log(element);
-                board[row][col] = -1;
-                element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
-                setCurrentPlayer((prev) => {
-                  prev = -1;
-                  console.log(getWinner(board, prev));
-                  return prev;
-                });
+                changeTurnAndCheck(1);
+                setAIMove(e);
+                changeTurnAndCheck(-1);
               }}
               id={`${i}_${j++}`}
               style={{
                 boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+                transition: "all 0.5s ease-in-out",
               }}
-            ></div>
+            ></motion.div>
           );
         })}
+      {winner !== 0 && <GetResult result={`${winner}`} mode={`${modeParam}`} />}
     </div>
   );
 };

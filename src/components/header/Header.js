@@ -4,11 +4,12 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/action";
+import { UseSelector } from "react-redux";
 const Header = () => {
+  const avt = useSelector((state) => state.avatar);
   const dispatch = useDispatch();
   const [isShowMenu, setIsShowMenu] = useState(false);
   const theme = useSelector((state) => state.theme);
-  const xColor = useSelector((state) => state.xColor);
   return (
     <div
       className={theme === "day" ? "bg-light" : "bg-night"}
@@ -53,6 +54,12 @@ const Header = () => {
       <div className="relative h-[40px] w-[40px]">
         <div
           className="h-full w-full bg-white rounded-full"
+          style={{
+            backgroundImage: `url(${avt})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
           onClick={() => {
             setIsShowMenu(!isShowMenu);
           }}
@@ -63,7 +70,7 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             className="custom-bar w-[200px] pb-3 absolute z-40 bg-white right-0 top-[calc(100%+15px)] rounded-md"
             style={{
-             boxShadow: "2px 2px 3px #cccc"
+              boxShadow: "3px 3px 4px #ccccc",
             }}
           >
             <div
@@ -84,7 +91,7 @@ const Header = () => {
               <div className="w-full h-full flex justify-center flex-col gap-3">
                 <div className="w-full flex">
                   <img
-                    src="https://picsum.photos/50"
+                    src={avt}
                     alt=""
                     className=" rounded-full w-[50px] h-[50px] m-auto"
                   />
@@ -99,7 +106,7 @@ const Header = () => {
                   }}
                   className="px-2 py-1 rounded-[20px] text-sm cursor-pointer"
                   style={{
-                    boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+                    boxShadow: "0px 4px 4px #cccc",
                   }}
                 >
                   Manage your account
@@ -110,7 +117,9 @@ const Header = () => {
               <div className="text-sm">Theme</div>
               <div className="flex px-5 justify-center gap-4 mt-3">
                 <div
-                  className="w-[30px] h-[30px] rounded-full bg-night theme-point cursor-pointer active-element"
+                  className={`w-[30px] h-[30px] rounded-full bg-night theme-point cursor-pointer ${
+                    theme === "night" && "active-element"
+                  }`}
                   onClick={(e) => {
                     document
                       .querySelector(".active-element")
@@ -127,7 +136,9 @@ const Header = () => {
                   }}
                 ></div>
                 <div
-                  className="w-[30px] h-[30px] rounded-full bg-day theme-point cursor-pointer"
+                  className={`w-[30px] h-[30px] rounded-full bg-day theme-point cursor-pointer ${
+                    theme === "day" && "active-element"
+                  }`}
                   onClick={(e) => {
                     document
                       .querySelector(".active-element")
