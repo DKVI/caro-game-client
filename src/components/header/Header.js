@@ -121,6 +121,7 @@ const Header = () => {
                     theme === "night" && "active-element"
                   }`}
                   onClick={(e) => {
+                    setIsShowMenu(!isShowMenu);
                     document
                       .querySelector(".active-element")
                       ?.classList.remove("active-element");
@@ -140,6 +141,7 @@ const Header = () => {
                     theme === "day" && "active-element"
                   }`}
                   onClick={(e) => {
+                    setIsShowMenu(!isShowMenu);
                     document
                       .querySelector(".active-element")
                       ?.classList.remove("active-element");

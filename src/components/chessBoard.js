@@ -8,11 +8,12 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import * as action from "../redux/action";
-let board = initializeBoard(15);
+let board = null;
 const ChessBoard = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const idParam = searchParams.get("id");
+  const dispatch = useDispatch();
   const modeParam = searchParams.get("mode");
   const theme = useSelector((state) => state.theme);
   const [currentPlayer, setCurrentPlayer] = useState(1);
@@ -27,6 +28,7 @@ const ChessBoard = () => {
 
   const [insertMove, setInsertMove] = useState("X");
   const [winner, setWinner] = useState(0);
+
   function isPlace(e) {
     return e.target.innerHTML ? false : true;
   }
@@ -35,48 +37,47 @@ const ChessBoard = () => {
     const element = document.getElementById(`${row}_${col}`);
     board[row][col] = -1;
     element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
-    // setCurrentPlayer((prev) => {
-    //   prev = -1;
-    //   const winnerPlayer = getWinner(board, prev);
-    //   console.log(winnerPlayer);
-    //   if (winnerPlayer !== 0) {
-    //     localStorage.setItem("break", "true");
-    //     setWinner((prev) => {
-    //       prev = winnerPlayer;
-    //       return prev;
-    //     });
-    //   }
-    //   return prev;
-    // });
   }
-  function setMove(e) {
+  function setMoveX(e) {
     let id = e.target.id;
     let [i, j] = id.split("_");
     console.log(i, j);
     if (insertMove === "X") {
       e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
       board[i][j] = 1;
-      // setCurrentPlayer((prev) => {
-      //   prev = 1;
-      //   const winnerPlayer = getWinner(board, prev);
-      //   console.log(winnerPlayer);
-      //   if (winnerPlayer !== 0) {
-      //     localStorage.setItem("break", "true");
-
-      //     setWinner((prev) => {
-      //       prev = winnerPlayer;
-      //       return prev;
-      //     });
-      //   }
-      //   return prev;
-      // });
     }
   }
+
+  function setMove(e) {
+    console.log(currentPlayer);
+    let id = e.target.id;
+    let [i, j] = id.split("_");
+    console.log(i, j);
+    if (currentPlayer === 1) {
+      e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
+      board[i][j] = 1;
+      changeTurnAndCheck(1);
+      setCurrentPlayer((prev) => {
+        prev = -1;
+        return prev;
+      });
+    } else if (currentPlayer === -1) {
+      e.target.innerHTML = `<div class="m-auto font-bold ${oColor} x-element shadow-custom text-lg">O</div>`;
+      board[i][j] = -1;
+      changeTurnAndCheck(-1);
+      setCurrentPlayer((prev) => {
+        prev = 1;
+        return prev;
+      });
+    }
+  }
+
   function changeTurnAndCheck(turn) {
     setCurrentPlayer((prev) => {
       prev = turn;
       const winnerPlayer = getWinner(board, prev);
       if (winnerPlayer !== 0) {
+        console.log(winnerPlayer);
         localStorage.setItem("break", "true");
         setWinner((prev) => {
           prev = winnerPlayer;
@@ -87,6 +88,11 @@ const ChessBoard = () => {
       return prev;
     });
   }
+  useEffect(() => {
+    setWinner(0);
+    board = initializeBoard(15);
+    dispatch(action.setMode(modeParam));
+  }, []);
   useEffect(() => {
     setXColor(theme === "night" ? "xDarkColor" : "xLightColor");
     setOColor(theme === "night" ? "oDarkColor" : "oLightColor");
@@ -133,19 +139,26 @@ const ChessBoard = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{
-                scale: [1, 1.2, 1.2, 1, 1],
+                scale: [1, 0.5, 0.5, 1, 1],
                 rotate: [0, 0, 270, 270, 0],
-                borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+                borderRadius: ["20%", "50%", "50%", "50%", "20%"],
                 opacity: 1,
+              }}
+              transition={{
+                duration: 1,
               }}
               key={index}
               className={`w-full h-full bg-white flex board-element ease-in-out] cursor-pointer`}
               onClick={(e) => {
-                if (!isPlace(e)) return;
-                setMove(e);
-                changeTurnAndCheck(1);
-                setAIMove(e);
-                changeTurnAndCheck(-1);
+                if (modeParam === "CPU") {
+                  if (!isPlace(e)) return;
+                  setMoveX(e);
+                  changeTurnAndCheck(1);
+                  setAIMove(e);
+                  changeTurnAndCheck(-1);
+                } else if (modeParam === "2Player") {
+                  setMove(e);
+                }
               }}
               id={`${i}_${j++}`}
               style={{

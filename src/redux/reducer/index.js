@@ -1,10 +1,10 @@
 const init = {
   username: "kaiv",
   email: "khacvi2003@gmail.com",
-  theme: "night",
-  xColor: "xDark",
-  oColor: "oDark",
-  background: "dark.gif",
+  theme: "day",
+  xColor: "xLight",
+  oColor: "oLight",
+  background: "light.gif",
   mode: "CPU",
   player2: "CPU",
   avatar: "https://random.imagecdn.app/200/200",
@@ -34,6 +34,18 @@ const rootReducer = (state = init, action) => {
       return {
         ...state,
         time,
+      };
+    case "SET_MODE":
+      const mode = action.payload;
+      return {
+        ...state,
+        mode,
+      };
+    case "SET_PLAYER_2_NAME":
+      const userName = action.payload;
+      return {
+        ...state,
+        player2: userName,
       };
     default:
       return state;

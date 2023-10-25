@@ -1,4 +1,4 @@
-import { UseSelector, useSelector } from "react-redux";
+import { UseSelector, useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
@@ -6,12 +6,14 @@ import SpinnerLoading from "../loading";
 const GetResult = (props) => {
   const result = props.result;
   console.log(result);
+  const dispatch = useDispatch();
+  const player2Name = useSelector((state) => state.player2);
   const time = useSelector((state) => state.time);
+  const mode = useSelector((state) => state.mode);
   function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-
     const formattedHours = String(hours).padStart(2, "0");
     const formattedMinutes = String(minutes).padStart(2, "0");
     const formattedSeconds = String(remainingSeconds).padStart(2, "0");
@@ -40,11 +42,20 @@ const GetResult = (props) => {
           >
             <div className="flex  flex-col w-full justify-end gap-3">
               {result === "1" ? (
-                <div className="font-bold text-red text-2xl">YOU WIN!</div>
+                player2Name === "CPU" ? (
+                  <div className="font-bold text-red text-2xl">YOU WIN!</div>
+                ) : (
+                  <div className="font-bold text-red text-2xl">YOU WIN!</div>
+                )
+              ) : player2Name !== "CPU" ? (
+                <div className="font-bold text-green text-2xl">
+                  {player2Name} WIN!
+                </div>
               ) : (
                 <div className="font-bold text-green text-2xl">YOU LOSE!</div>
               )}
-              <div>Mode: {"play with CPU"}</div>
+
+              <div>Mode: play with {mode}</div>
               <div>Play times: {formatTime(time)}</div>
               <div>Score: {3232}</div>
               <div className="flex justify-around gap-3">
