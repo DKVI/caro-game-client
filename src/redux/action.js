@@ -33,4 +33,42 @@ const setTime = (payload) => {
   };
 };
 
-export { changeTheme, setMode, setPlayer2Name, isBreak, setTime };
+const setScore = (payload) => {
+  return {
+    type: "SET_SCORE",
+    payload,
+  };
+};
+
+const setId = (payload) => {
+  return {
+    type: "SET_ID",
+    payload,
+  };
+};
+
+const setStartTime = (payload) => {
+  return {
+    type: "SET_START_TIME",
+    payload,
+  };
+};
+
+const setUsername = (payload) => {
+  return {
+    type: "SET_USER",
+    payload,
+  };
+};
+
+export {
+  changeTheme,
+  setMode,
+  setPlayer2Name,
+  isBreak,
+  setTime,
+  setScore,
+  setId,
+  setStartTime,
+  setUsername,
+};

@@ -2,7 +2,6 @@
 const PLAYER_X = 1; // Ký hiệu cho người chơi X
 const PLAYER_O = -1; // Ký hiệu cho người chơi O
 const EMPTY = 0; // Ký hiệu cho ô trống
-
 // Kích thước bảng cờ
 const BOARD_SIZE = 15;
 
@@ -185,7 +184,6 @@ function evaluateLine(line) {
     return 0; // Trạng thái không đáng kể
   }
 }
-
 // Hàm tìm kiếm nước đi tối ưu bằng thuật toán minimax với cắt tỉa alpha-beta
 function findBestMove(depth, board) {
   let bestScore = -Infinity;

@@ -48,6 +48,16 @@ body {
     color: rgb(188, 143, 6);
 }
 
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 
 .shadow-custom {
     filter: drop-shadow(2px 2px 2px rgb(199, 198, 198));

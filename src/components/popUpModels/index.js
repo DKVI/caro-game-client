@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import SpinnerLoading from "../loading";
+import * as API from "../../axios/API/index";
 const GetResult = (props) => {
   const result = props.result;
   console.log(result);
@@ -10,6 +11,7 @@ const GetResult = (props) => {
   const player2Name = useSelector((state) => state.player2);
   const time = useSelector((state) => state.time);
   const mode = useSelector((state) => state.mode);
+  const startTime = useSelector((state) => state.start_time);
   function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -17,10 +19,21 @@ const GetResult = (props) => {
     const formattedHours = String(hours).padStart(2, "0");
     const formattedMinutes = String(minutes).padStart(2, "0");
     const formattedSeconds = String(remainingSeconds).padStart(2, "0");
-
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
-  useEffect(() => {}, []);
+  function doneGame() {
+    API.addGameData({
+      opponent_name: player2Name,
+      score: result === "1" ? 100 : -50,
+      game_type: mode,
+      difficulty: 0,
+      play_time: time,
+      start_time: startTime,
+      status: "done",
+      data: "{}",
+      nextmove: null,
+    });
+  }
   return (
     <>
       {time !== 0 ? (
@@ -57,15 +70,23 @@ const GetResult = (props) => {
 
               <div>Mode: play with {mode}</div>
               <div>Play times: {formatTime(time)}</div>
-              <div>Score: {3232}</div>
+              <div>Score: {result === "1" ? 100 : -50}</div>
               <div className="flex justify-around gap-3">
                 <Link
                   to="/dashboard"
                   className="px-2 py-1 bg-red text-white font-bold rounded-md hover:opacity-[0.6]"
+                  onClick={() => {
+                    doneGame();
+                  }}
                 >
                   HOME
                 </Link>
-                <Link className="px-2 py-1 bg-blue text-white font-bold rounded-md hover:opacity-[0.6]">
+                <Link
+                  className="px-2 py-1 bg-blue text-white font-bold rounded-md hover:opacity-[0.6] "
+                  onClick={() => {
+                    doneGame();
+                  }}
+                >
                   REPLAY
                 </Link>
               </div>

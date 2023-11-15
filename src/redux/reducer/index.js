@@ -1,6 +1,5 @@
 const init = {
-  username: "kaiv",
-  email: "khacvi2003@gmail.com",
+  username: " ",
   theme: "day",
   xColor: "xLight",
   oColor: "oLight",
@@ -10,10 +9,19 @@ const init = {
   avatar: "https://random.imagecdn.app/200/200",
   time: 0,
   break: false,
+  score: 0,
+  id: "",
+  start_times: "",
 };
 
 const rootReducer = (state = init, action) => {
   switch (action.type) {
+    case "SET_USER":
+      const username = action.payload;
+      return {
+        ...state,
+        username,
+      };
     case "CHANGE_THEME":
       const [theme, xColor, oColor, background] = action.payload;
       return {
@@ -46,6 +54,24 @@ const rootReducer = (state = init, action) => {
       return {
         ...state,
         player2: userName,
+      };
+    case "SET_SCORE":
+      const score = action.payload;
+      return {
+        ...state,
+        score: score,
+      };
+    case "SET_ID":
+      const id = action.payload;
+      return {
+        ...state,
+        id: id,
+      };
+    case "SET_START_TIME":
+      const startTime = action.payload;
+      return {
+        ...state,
+        start_times: startTime,
       };
     default:
       return state;

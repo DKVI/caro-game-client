@@ -187,7 +187,7 @@ const GamePage = () => {
             }}
           >
             <motion.div
-              className="m-auto bg-white w-1/3 px-3 p-6 flex-col"
+              className="m-auto bg-white w-1/3 px-3 p-6 flex-col rounded-xl"
               initial={{ scale: 0.5, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{

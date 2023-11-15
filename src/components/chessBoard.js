@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import initializeBoard from "../rules/initBoard";
-import { findBestMove, makeMove } from "../rules/nextMove";
+import { findBestMove } from "../rules/nextMove";
 import getWinner from "../rules/checkWinner";
 import { GetResult } from "./popUpModels";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import * as action from "../redux/action";
+import utils from "../utils";
+import * as API from "../axios/API/index";
 let board = null;
+const initTime = false;
 const ChessBoard = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const idParam = searchParams.get("id");
   const dispatch = useDispatch();
+  const player2Name = useSelector((state) => state.player2);
+  const start_time = useSelector((state) => state.start_times);
   const modeParam = searchParams.get("mode");
   const theme = useSelector((state) => state.theme);
   const [currentPlayer, setCurrentPlayer] = useState(1);
+  const [showResult, setShowResult] = useState(initTime);
   const [xColor, setXColor] = useState(
     theme === "night" ? "xDarkColor" : "xLightColor"
   );
@@ -73,10 +79,17 @@ const ChessBoard = () => {
   }
 
   function changeTurnAndCheck(turn) {
+    let winnerLocal = 0;
     setCurrentPlayer((prev) => {
       prev = turn;
       const winnerPlayer = getWinner(board, prev);
       if (winnerPlayer !== 0) {
+        winnerLocal = turn;
+        if (turn === 1) {
+          dispatch(action.setScore(100));
+        } else {
+          dispatch(action.setScore(-50));
+        }
         console.log(winnerPlayer);
         localStorage.setItem("break", "true");
         setWinner((prev) => {
@@ -87,12 +100,23 @@ const ChessBoard = () => {
       console.log(prev);
       return prev;
     });
+    return winnerLocal;
   }
+  useEffect(() => {
+    dispatch(action.setId(idParam));
+    console.log(utils.createTimeStamp());
+    dispatch(action.setStartTime(utils.createTimeStamp()));
+  }, [idParam, modeParam]);
   useEffect(() => {
     setWinner(0);
     board = initializeBoard(15);
     dispatch(action.setMode(modeParam));
   }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      setShowResult(true);
+    }, 2000);
+  }, [winner]);
   useEffect(() => {
     setXColor(theme === "night" ? "xDarkColor" : "xLightColor");
     setOColor(theme === "night" ? "oDarkColor" : "oLightColor");
@@ -153,9 +177,11 @@ const ChessBoard = () => {
                 if (modeParam === "CPU") {
                   if (!isPlace(e)) return;
                   setMoveX(e);
-                  changeTurnAndCheck(1);
+                  if (changeTurnAndCheck(1) === 1) return;
                   setAIMove(e);
-                  changeTurnAndCheck(-1);
+                  if (getWinner(board, -1) === -1) {
+                    changeTurnAndCheck(-1);
+                  }
                 } else if (modeParam === "2Player") {
                   setMove(e);
                 }
@@ -168,7 +194,9 @@ const ChessBoard = () => {
             ></motion.div>
           );
         })}
-      {winner !== 0 && <GetResult result={`${winner}`} mode={`${modeParam}`} />}
+      {winner !== 0 && showResult && (
+        <GetResult result={`${winner}`} mode={`${modeParam}`} />
+      )}
     </div>
   );
 };

@@ -4,11 +4,21 @@ import darkGif from "../assets/images/dark.gif";
 import { motion } from "framer-motion";
 import * as icons from "../icon";
 import * as message from "../components/messages/index";
+import * as API from "../axios/API/index";
+import * as handleToken from "../handleToken/index";
+import SpinnerLoading from "../components/loading";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import * as action from "../redux/action";
 const LoginPage = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+  const { addTokenToCookie } = handleToken;
   const [mode, setMode] = useState("login");
   const [gif, setGif] = useState(lightGif);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [pending, setPending] = useState(false);
   const loginImgClass = "w-1/2 h-full bg-transparent absolute top-0 left-0";
   const registerImgClass =
     "w-1/2 h-full bg-transparent absolute top-0 left-[400px]";
@@ -143,7 +153,8 @@ const LoginPage = () => {
     }
     return isConfirm;
   };
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    setPending((prev) => true);
     console.log("login");
     const formData = {
       username: inputUserName,
@@ -152,10 +163,29 @@ const LoginPage = () => {
     if (!handleCheckRules(formData.username, null, formData.password, null))
       return false;
     console.log(formData);
+    API.login(formData)
+      .then((res) => {
+        addTokenToCookie(res.data.token);
+        setPending((prev) => false);
+        alert("Đăng nhập thành công!");
+        dispatch(action.setUsername(inputUserName));
+        return navigation("/dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Tên tài khoản hoặc mật khẩu không đúng! Vui lòng thử lại");
+        setPending((prev) => {
+          prev = 0;
+          clearData();
+          return prev;
+        });
+      });
   };
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    setPending((prev) => true);
     console.log("register");
     const formData = {
+      name: inputUserName,
       username: inputUserName,
       email: inputEmail,
       password: inputPassword,
@@ -168,9 +198,33 @@ const LoginPage = () => {
         formData.password,
         formData.passwordConfirm
       )
-    )
+    ) {
       return false;
-    console.log(formData);
+    }
+    await API.register(formData)
+      .then((res) => {
+        const token = res.data.token;
+        addTokenToCookie(token);
+        setPending((prev) => false);
+
+        alert("Đăng ký thành công! Vui lòng đăng nhập");
+        clearData();
+        setMode((prev) => {
+          prev = "login";
+          changePicture(prev);
+          return prev;
+        });
+        moveLogin();
+        setTimeout(() => {
+          clearData();
+        }, 500);
+      })
+      .catch((err) => {
+        alert("Tên người dùng đã tồn tại! Vui lòng thử lại");
+        setPending((prev) => false);
+        clearData();
+        return;
+      });
   };
   const checkRule = {
     required: (value) => {
@@ -372,7 +426,9 @@ const LoginPage = () => {
               style={{
                 boxShadow: "rgba(0, 0, 0, 0.2) 0px 5px 0px 2px",
               }}
-              onClick={handleRegister}
+              onClick={() => {
+                handleRegister();
+              }}
             >
               CREATE ACCOUNT
             </motion.button>
@@ -493,6 +549,7 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+      {pending === true && <SpinnerLoading full={true} />}
     </div>
   );
 };
