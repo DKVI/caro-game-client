@@ -93,6 +93,9 @@ const DashboardPage = () => {
     gif === "light.gif" ? lightGif : darkGif
   );
   useEffect(() => {
+    window.removeEventListener("keypress", (e) => {
+      console.log(e.key);
+    });
     window.onbeforeunload = function () {
       return "Do you really want to close?";
     };

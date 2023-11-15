@@ -46,7 +46,19 @@ const LoginPage = () => {
       registerForm.style.opacity = "1";
     }, 300);
   };
-  useEffect(() => {});
+  useEffect(() => {
+    const loginBtn = document.querySelector(".login-btn");
+    const registerBtn = document.querySelector(".register-btn");
+    window.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        if (mode === "login") {
+          loginBtn.click();
+        } else {
+          registerBtn.click();
+        }
+      }
+    });
+  }, []);
   const clearData = () => {
     setInputUserName("");
     setInputEmail("");
@@ -154,35 +166,41 @@ const LoginPage = () => {
     return isConfirm;
   };
   const handleLogin = async () => {
-    setPending((prev) => true);
     console.log("login");
+    setPending(true);
     const formData = {
       username: inputUserName,
       password: inputPassword,
     };
-    if (!handleCheckRules(formData.username, null, formData.password, null))
+    console.log(
+      handleCheckRules(formData.username, null, formData.password, null)
+    );
+    if (!handleCheckRules(formData.username, null, formData.password, null)) {
+      setPending(false);
       return false;
-    console.log(formData);
-    API.login(formData)
-      .then((res) => {
-        addTokenToCookie(res.data.token);
-        setPending((prev) => false);
-        alert("Đăng nhập thành công!");
-        dispatch(action.setUsername(inputUserName));
-        return navigation("/dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("Tên tài khoản hoặc mật khẩu không đúng! Vui lòng thử lại");
-        setPending((prev) => {
-          prev = 0;
-          clearData();
-          return prev;
+    } else {
+      console.log(formData);
+      API.login(formData)
+        .then((res) => {
+          addTokenToCookie(res.data.token);
+          setPending((prev) => false);
+          alert("Đăng nhập thành công!");
+          dispatch(action.setUsername(inputUserName));
+          return navigation("/dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Tên tài khoản hoặc mật khẩu không đúng! Vui lòng thử lại");
+          setPending((prev) => {
+            prev = 0;
+            clearData();
+            return prev;
+          });
         });
-      });
+    }
   };
   const handleRegister = async () => {
-    setPending((prev) => true);
+    setPending(true);
     console.log("register");
     const formData = {
       name: inputUserName,
@@ -199,6 +217,7 @@ const LoginPage = () => {
         formData.passwordConfirm
       )
     ) {
+      setPending(false);
       return false;
     }
     await API.register(formData)
@@ -422,7 +441,7 @@ const LoginPage = () => {
                 transform: "translateY(5px)",
                 boxShadow: "none",
               }}
-              className="w-full p-3 bg-dark text-white rounded-lg font-bold mt-3"
+              className="w-full p-3 bg-dark text-white rounded-lg font-bold mt-3 register-btn"
               style={{
                 boxShadow: "rgba(0, 0, 0, 0.2) 0px 5px 0px 2px",
               }}
@@ -516,7 +535,7 @@ const LoginPage = () => {
             </div>
             <motion.button
               whileHover={{ boxShadow: "none", transform: "translateY(5px)" }}
-              className="w-full p-3 bg-orange text-white rounded-lg font-bold mt-3"
+              className="w-full p-3 bg-orange text-white rounded-lg font-bold mt-3 login-btn"
               style={{
                 boxShadow: "#FBD5A4 0px 5px 0px 2px",
               }}
