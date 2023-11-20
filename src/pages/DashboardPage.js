@@ -4,7 +4,7 @@ import SpinnerLoading from "../components/loading";
 import Header from "../components/header/Header";
 import lightGif from "../assets/images/light.gif";
 import darkGif from "../assets/images/dark.gif";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { color, motion } from "framer-motion";
 import Chart from "react-google-charts";
@@ -14,7 +14,10 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import * as API from "../axios/API/index";
 import utils from "../utils";
+
 const DashboardPage = () => {
+  localStorage.removeItem("data");
+  const theme = useSelector((state) => state.theme);
   const { formatTimeFromSeconds, normalSort } = utils;
   const result = (games) => {
     let win = 0;
@@ -96,12 +99,6 @@ const DashboardPage = () => {
     window.removeEventListener("keypress", (e) => {
       console.log(e.key);
     });
-    window.onbeforeunload = function () {
-      return "Do you really want to close?";
-    };
-    window.onunload = function () {
-      return "Do you really want to close?";
-    };
     if (!authen.isLogin()) {
       return navigate("/login");
     }
@@ -387,30 +384,78 @@ const DashboardPage = () => {
                       Array.from(history).map((item, index) => (
                         <div
                           key={index}
-                          className="w-full rounded-md flex-none mt-2 px-3 py-3 flex"
+                          className={`w-full rounded-md flex-none mt-2 px-3 py-3 flex relative ${
+                            item.SCORE === 0 &&
+                            `border-4 ${
+                              theme === "night" ? "border-dark" : "border-light"
+                            } cursor-pointer`
+                          }`}
+                          onClick={(e) => {
+                            if (e.target.closest(".cursor-pointer")) {
+                              localStorage.setItem(
+                                "data",
+                                JSON.stringify({
+                                  ID: item.ID,
+                                  OPPONENT_NAME: item.OPPONENT_NAME,
+                                  DATA: item.DATA,
+                                  NEXTMOVE: item.NEXTMOVE,
+                                  PLAY_TIME: item.PLAY_TIME,
+                                })
+                              );
+                              if (item.OPPONENT_NAME !== "CPU") {
+                                return navigate(
+                                  `/game?mode=2Player&2PlayerName=${item.OPPONENT_NAME}&id=${item.ID}`
+                                );
+                              } else {
+                                return navigate(`/game?mode=CPU&id=${item.ID}`);
+                              }
+                            }
+                          }}
                           style={{
                             boxShadow: "2px 2px 10px 3px #cccc",
                           }}
                         >
+                          {item.SCORE === 0 && (
+                            <motion.div
+                              whileHover={{
+                                opacity: 1,
+                              }}
+                              className={`w-full opacity-0 h-full ${
+                                theme === "night" ? "bg-dark" : "bg-light"
+                              } absolute left-0 right-0 top-0 bottom-0 z-40 flex overflow-hidden`}
+                            >
+                              <div className="m-auto text-white font-bold">
+                                CONTINUE?
+                              </div>
+                            </motion.div>
+                          )}
                           <div
-                            className="w-1/5 flex align-middle"
+                            className="w-1/4 flex align-middle"
                             style={{
                               filter: "drop-shadow(2px 4px 1px #cccc)",
                             }}
                           >
                             <div
                               className={`m-auto font-bold ${
-                                item.SCORE < 0 ? "text-red" : "text-blue"
+                                item.SCORE !== 0
+                                  ? item.SCORE < 0
+                                    ? "text-red"
+                                    : "text-blue"
+                                  : "text-green"
                               }`}
                               style={{
                                 filter: "drop-shadow(2px 4px 1px #cccc)",
                               }}
                             >
-                              {item.SCORE < 0 ? "LOSE" : "WIN"}
+                              {item.SCORE !== 0
+                                ? item.SCORE < 0
+                                  ? "LOSE"
+                                  : "WIN"
+                                : "PAUSE"}
                             </div>
                           </div>
                           <div
-                            className="w-1/5 flex align-middle"
+                            className="w-1/4 flex align-middle"
                             style={{
                               filter: "drop-shadow(2px 4px 1px #cccc)",
                             }}
@@ -420,7 +465,7 @@ const DashboardPage = () => {
                             </div>
                           </div>
                           <div
-                            className="flex-none flex align-middle  w-2/5"
+                            className="flex-none flex align-middle  w-1/4"
                             style={{
                               filter: "drop-shadow(2px 4px 1px #cccc)",
                             }}
@@ -428,14 +473,22 @@ const DashboardPage = () => {
                             {formatTimeFromSeconds(item.PLAY_TIME)}
                           </div>
                           <div
-                            className={`flex-none flex align-middle ${
-                              item.SCORE > 0 ? "text-green" : "text-red"
+                            className={`w-1/4 flex align-middle  ${
+                              item.SCORE !== 0
+                                ? item.SCORE > 0
+                                  ? "text-green"
+                                  : "text-red"
+                                : "text-black"
                             }`}
                             style={{
                               filter: "drop-shadow(2px 4px 1px #cccc)",
                             }}
                           >
-                            {item.SCORE < 0 ? item.SCORE : `+${item.SCORE}`}
+                            {item.SCORE !== 0
+                              ? item.SCORE < 0
+                                ? item.SCORE
+                                : `+${item.SCORE}`
+                              : "no score"}
                           </div>
                         </div>
                       ))

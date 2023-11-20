@@ -284,12 +284,14 @@ const LoginPage = () => {
     <div
       className={`${
         mode === "login" ? backGroundLightClass : backGroundDarkClass
-      }`}
+      } overflow-hidden`}
       style={{
         transition: "all 0.5s ease-in-out",
       }}
     >
-      <div
+      <motion.div
+        initial={{ y: 100, opacity: 0.4 }}
+        animate={{ y: 0, transition: 0.6, opacity: 1 }}
         className="w-[800px] h-[500px] bg-[white] relative m-auto flex"
         style={{
           overflow: "hidden",
@@ -567,7 +569,7 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
       {pending === true && <SpinnerLoading full={true} />}
     </div>
   );

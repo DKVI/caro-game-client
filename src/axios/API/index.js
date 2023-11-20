@@ -93,6 +93,61 @@ const getUser = async () => {
       .catch((err) => reject(err));
   });
 };
+const findGame = async (id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/game/${id}`, {
+        headers: {
+          Authorization: "Bearer " + getTokenFromCookie(),
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
+
+const updateGame = async (ID, body) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch(
+        `/game/${ID}`,
+        { ...body },
+        {
+          headers: {
+            Authorization: "Bearer " + getTokenFromCookie(),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
+
+const logout = async () => {
+  console.log(getTokenFromCookie);
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/auth/logout", {
+        headers: {
+          Authorization: "Bearer " + getTokenFromCookie(),
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
+
+const getAvt = async () => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get("https://random.imagecdn.app/200/200")
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
 
 export {
   register,
@@ -102,4 +157,8 @@ export {
   addGameData,
   updateAllScore,
   getUser,
+  findGame,
+  updateGame,
+  logout,
+  getAvt,
 };

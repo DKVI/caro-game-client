@@ -3,18 +3,18 @@ import { delay, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import * as action from "../redux/action";
 import { useLocation, useNavigate } from "react-router-dom";
+import ConfirmDialog from "./popUpModels/ConfirmDialog";
 localStorage.setItem("break", "false");
-let count = 0;
-const InfoBoard = () => {
+const InfoBoard = ({ playTime }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const player2NameParams = searchParams.get("2PlayerName");
   const modeParam = searchParams.get("mode");
   const dispatch = useDispatch();
   const isBreak = localStorage.getItem("break");
-  const player2Name = useSelector((state) => state.player2);
-  const [timer, setTimer] = useState(null);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(playTime ? Number.parseInt(playTime) : 0);
+  const [showConfirm, SetShowConfirm] = useState(false);
   function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -25,23 +25,28 @@ const InfoBoard = () => {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
   useEffect(() => {
-    const newTimer = setTimeout(() => {
+    console.log(time);
+  }, []);
+  let newTimer = setTimeout(() => {}, 1000);
+  const hideConfirmDialog = () => {
+    SetShowConfirm(false);
+  };
+  useEffect(() => {
+    console.log(time);
+    newTimer = setTimeout(() => {
       if (isBreak === "true") {
+        console.log(true);
         dispatch(action.setTime(time));
         clearTimeout(newTimer);
         return;
+      } else {
+        setTime((prev) => prev + 1);
       }
-      count++;
-      console.log(time);
-      setTime(count);
     }, 1000);
     return () => {
       clearTimeout(newTimer);
     };
   }, [time]);
-  useEffect(() => {
-    count = 0;
-  }, []);
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
@@ -61,7 +66,9 @@ const InfoBoard = () => {
       )}
       {modeParam === "2Player" && (
         <div className="flex gap-1 justify-center">
-          <h1>MODE: Play with {player2Name}</h1>
+          <h1>
+            MODE: Play with {player2NameParams ? player2NameParams : "CPU"}
+          </h1>
         </div>
       )}
       <div>{formatTime(time)}</div>
@@ -74,10 +81,24 @@ const InfoBoard = () => {
         >
           back
         </button>
-        <button className="px-2 py-1 bg-blue w-[40%] text-white rounded-md">
+        <button
+          className="px-2 py-1 bg-blue w-[40%] text-white rounded-md"
+          onClick={() => {
+            SetShowConfirm(true);
+            dispatch(action.isBreak(true));
+          }}
+        >
           save
         </button>
       </div>
+      {showConfirm && (
+        <ConfirmDialog
+          msg={"Do you want to save this game?"}
+          action={"save"}
+          callback={hideConfirmDialog}
+          time={time}
+        />
+      )}
     </motion.div>
   );
 };

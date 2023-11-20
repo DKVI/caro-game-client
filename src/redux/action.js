@@ -61,6 +61,18 @@ const setUsername = (payload) => {
   };
 };
 
+const setDataBoard = (payload) => {
+  return {
+    type: "SET_DATA_BOARD",
+    payload,
+  };
+};
+const getRandomAvt = () => {
+  return {
+    type: "GET_RANDOM_AVT",
+  };
+};
+
 export {
   changeTheme,
   setMode,
@@ -71,4 +83,6 @@ export {
   setId,
   setStartTime,
   setUsername,
+  setDataBoard,
+  getRandomAvt,
 };

@@ -7,7 +7,6 @@ import darkGif from "../assets/images/dark.gif";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import ChessBoard from "../components/chessBoard";
-import { GetResult } from "../components/popUpModels";
 import { motion } from "framer-motion";
 import * as icon from "../icon";
 import { v4 as uuidv4 } from "uuid";
@@ -16,9 +15,10 @@ import * as action from "../redux/action";
 let id = null;
 let isBreak = false;
 const GamePage = () => {
+  const tempData = JSON.parse(localStorage.getItem("data"));
   localStorage.setItem("break", "false");
   const theme = useSelector((state) => state.theme);
-  const [color, setColor] = useState("night");
+  const [color, setColor] = useState("day");
   const location = useLocation();
   const CPUMode = icon.HiOutlineDesktopComputer;
   const P2Mode = icon.LiaUserFriendsSolid;
@@ -33,10 +33,14 @@ const GamePage = () => {
   const [gifBackground, setGifBackground] = useState(
     gif === "light.gif" ? lightGif : darkGif
   );
+  function clearTemp() {
+    localStorage.removeItem("data");
+  }
   useEffect(() => {
     if (!authen.isLogin()) {
       return navigate("/login");
     }
+    console.log(JSON.parse(localStorage.getItem("data")));
     dispatch(action.setTime(0));
   }, []);
 
@@ -51,6 +55,7 @@ const GamePage = () => {
     console.log(color);
   }, [color]);
   useEffect(() => {
+    console.log(gif);
     setGifBackground(gif === "light.gif" ? lightGif : darkGif);
     setColor(gif === "light.gif" ? "day" : "night");
   }, [gif]);
@@ -74,8 +79,9 @@ const GamePage = () => {
   }, [mode]);
   const create2PlayerMode = () => {
     id = uuidv4();
-    return navigate(`/game?mode=2Player&id=${id}`);
+    return navigate(`/game?mode=2Player&2PlayerName=${p2Input}&id=${id}`);
   };
+
   return !authen.isLogin ? (
     <SpinnerLoading />
   ) : (
@@ -90,7 +96,7 @@ const GamePage = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {idParam && modeParam === "CPU" ? (
+        {idParam && modeParam === "CPU" && !tempData ? (
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
@@ -103,7 +109,23 @@ const GamePage = () => {
             </div>
           </>
         ) : null}
-        {idParam && modeParam === "2Player" ? (
+        {idParam && modeParam && tempData ? (
+          <>
+            <div className="w-1/5 h-full"></div>
+            <div className="w-3/5 h-full flex">
+              <div className="m-auto">
+                <ChessBoard
+                  dataBoard={JSON.parse(tempData.DATA)}
+                  nextMove={tempData.NEXTMOVE}
+                />
+              </div>
+            </div>
+            <div className="w-1/5 h-full flex">
+              <InfoBoard playTime={tempData.PLAY_TIME} />
+            </div>
+          </>
+        ) : null}
+        {idParam && modeParam === "2Player" && !tempData ? (
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
@@ -116,7 +138,7 @@ const GamePage = () => {
             </div>
           </>
         ) : null}
-        {!idParam && modeParam === "2Player" ? (
+        {!idParam && modeParam === "2Player" && !tempData ? (
           <div className="w-full h-full flex">
             <motion.div
               className="m-auto bg-white w-1/3 px-3 p-6 flex-col flex gap-4"

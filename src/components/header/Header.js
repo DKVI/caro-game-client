@@ -1,15 +1,91 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import * as actions from "../../redux/action";
-import { UseSelector } from "react-redux";
+import SpinnerLoading from "../loading";
+import * as API from "../../axios/API/index";
+import { getTokenFromCookie } from "../../handleToken";
+import { useEffect } from "react";
+const ConfirmLogout = (props) => {
+  const [pending, setPending] = useState(false);
+  const navigate = useNavigate();
+  const logout = () => {
+    setPending(true);
+    API.logout()
+      .then(() => {
+        document.cookie = "token" + `=; expires=Thu, ${Date.now()} ; path=/;`;
+        setTimeout(() => {
+          setPending(false);
+          navigate("/Login");
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Logout failure!");
+      });
+  };
+  return (
+    <motion.div
+      className="w-screen fixed top-[60px] left-0 bottom-0 right-0 flex z-40"
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+      }}
+    >
+      <motion.div
+        initial={{ scale: 0.4, y: 100 }}
+        animate={{ scale: 1, y: 0 }}
+        className="w-[350px] bg-white rounded-md m-auto"
+      >
+        <div className="w-full h-[50px] border-b-2 px-2 py-1 flex justify-between items-center">
+          <div>Confirm</div>
+          <div
+            onClick={() => {
+              props.callback();
+            }}
+            className="py-1 px-2 hover:bg-light hover:text-white cursor-pointer text-[16px]"
+            style={{
+              transition: "all 0.2s ease-in-out",
+            }}
+          >
+            &times;
+          </div>
+        </div>
+        <div className="p-3 flex flex-col gap-5">
+          <div className="text-left">Do you want to log out?</div>
+          <div className="flex justify-end gap-2">
+            <button
+              className="px-2 py-1 bg-red text-white hover:opacity-[0.6]"
+              onClick={() => {
+                props.callback();
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-2 py-1 bg-blue text-white hover:opacity-[0.6]"
+              onClick={logout}
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </motion.div>
+      {pending && <SpinnerLoading />}
+    </motion.div>
+  );
+};
+
 const Header = () => {
+  const navigate = useNavigate();
+  const [isLogout, setIsLogout] = useState(false);
   const avt = useSelector((state) => state.avatar);
   const dispatch = useDispatch();
   const [isShowMenu, setIsShowMenu] = useState(false);
+
   const theme = useSelector((state) => state.theme);
+
   return (
     <div
       className={theme === "day" ? "bg-light" : "bg-night"}
@@ -42,13 +118,13 @@ const Header = () => {
           GAME
         </NavLink>
         <NavLink
-          to="/setting"
+          to="/user"
           style={{
             color: "white",
             filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
           }}
         >
-          SETTING
+          USER
         </NavLink>
       </div>
       <div className="relative h-[40px] w-[40px]">
@@ -70,7 +146,7 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             className="custom-bar w-[200px] pb-3 absolute z-40 bg-white right-0 top-[calc(100%+15px)] rounded-md"
             style={{
-              boxShadow: "3px 3px 4px #ccccc",
+              boxShadow: "0px 0px 12px 3px #cccc",
             }}
           >
             <div
@@ -107,6 +183,9 @@ const Header = () => {
                   className="px-2 py-1 rounded-[20px] text-sm cursor-pointer"
                   style={{
                     boxShadow: "0px 4px 4px #cccc",
+                  }}
+                  onClick={() => {
+                    return navigate("/setting");
                   }}
                 >
                   Manage your account
@@ -158,9 +237,30 @@ const Header = () => {
                 ></div>
               </div>
             </div>
+            <div className="mt-5">
+              <div
+                className="m-auto px-2 py-1 rounded-xl w-[40%] text-[14px] cursor-pointer"
+                style={{
+                  boxShadow: "0px 3px 3px 3px #cccc",
+                }}
+                onClick={() => {
+                  setIsShowMenu(!isShowMenu);
+                  setIsLogout(true);
+                }}
+              >
+                Log out
+              </div>
+            </div>
           </motion.div>
         )}
       </div>
+      {isLogout && (
+        <ConfirmLogout
+          callback={() => {
+            setIsLogout(false);
+          }}
+        />
+      )}
     </div>
   );
 };

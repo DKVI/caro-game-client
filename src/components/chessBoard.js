@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import initializeBoard from "../rules/initBoard";
 import { findBestMove } from "../rules/nextMove";
 import getWinner from "../rules/checkWinner";
-import { GetResult } from "./popUpModels";
+import GetResult from "./popUpModels/GetResult";
 import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
@@ -12,8 +12,9 @@ import utils from "../utils";
 import * as API from "../axios/API/index";
 let board = null;
 const initTime = false;
-const ChessBoard = () => {
+const ChessBoard = (props) => {
   const location = useLocation();
+  const { dataBoard, nextMove } = props;
   const searchParams = new URLSearchParams(location.search);
   const idParam = searchParams.get("id");
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const ChessBoard = () => {
   const start_time = useSelector((state) => state.start_times);
   const modeParam = searchParams.get("mode");
   const theme = useSelector((state) => state.theme);
-  const [currentPlayer, setCurrentPlayer] = useState(1);
+  const [currentPlayer, setCurrentPlayer] = useState(nextMove ? nextMove : 1);
   const [showResult, setShowResult] = useState(initTime);
   const [xColor, setXColor] = useState(
     theme === "night" ? "xDarkColor" : "xLightColor"
@@ -44,6 +45,7 @@ const ChessBoard = () => {
     board[row][col] = -1;
     element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
   }
+
   function setMoveX(e) {
     let id = e.target.id;
     let [i, j] = id.split("_");
@@ -68,7 +70,7 @@ const ChessBoard = () => {
         return prev;
       });
     } else if (currentPlayer === -1) {
-      e.target.innerHTML = `<div class="m-auto font-bold ${oColor} x-element shadow-custom text-lg">O</div>`;
+      e.target.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
       board[i][j] = -1;
       changeTurnAndCheck(-1);
       setCurrentPlayer((prev) => {
@@ -102,6 +104,23 @@ const ChessBoard = () => {
     });
     return winnerLocal;
   }
+  const fillBoardElement = () => {
+    console.log(xColor, oColor);
+    for (let element in dataBoard) {
+      Array.from(dataBoard[element]).forEach((item, index) => {
+        if (item === 1) {
+          document.getElementById(
+            `${element}_${index}`
+          ).innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
+        } else if (item === -1) {
+          console.log(xColor);
+          document.getElementById(
+            `${element}_${index}`
+          ).innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
+        }
+      });
+    }
+  };
   useEffect(() => {
     dispatch(action.setId(idParam));
     console.log(utils.createTimeStamp());
@@ -109,7 +128,10 @@ const ChessBoard = () => {
   }, [idParam, modeParam]);
   useEffect(() => {
     setWinner(0);
-    board = initializeBoard(15);
+    board = dataBoard ? dataBoard : initializeBoard(15);
+    if (dataBoard) {
+      fillBoardElement();
+    }
     dispatch(action.setMode(modeParam));
   }, []);
   useEffect(() => {
@@ -118,28 +140,31 @@ const ChessBoard = () => {
     }, 2000);
   }, [winner]);
   useEffect(() => {
+    console.log("theme change");
+    console.log(theme);
     setXColor(theme === "night" ? "xDarkColor" : "xLightColor");
     setOColor(theme === "night" ? "oDarkColor" : "oLightColor");
     const xElements = document.querySelectorAll(".x-element");
-    Array.from(xElements).forEach((element) => {
-      if (element.classList.contains("xDarkColor")) {
+    const oElements = document.querySelectorAll(".o-element");
+    if (theme === "day") {
+      Array.from(xElements).forEach((element) => {
         element.classList.remove("xDarkColor");
         element.classList.add("xLightColor");
-      } else if (element.classList.contains("xLightColor")) {
-        element.classList.remove("xLightColor");
-        element.classList.add("xDarkColor");
-      }
-    });
-    const oElements = document.querySelectorAll(".o-element");
-    Array.from(oElements).forEach((element) => {
-      if (element.classList.contains("oDarkColor")) {
+      });
+      Array.from(oElements).forEach((element) => {
         element.classList.remove("oDarkColor");
         element.classList.add("oLightColor");
-      } else if (element.classList.contains("oLightColor")) {
+      });
+    } else {
+      Array.from(xElements).forEach((element) => {
+        element.classList.remove("xLightColor");
+        element.classList.add("xDarkColor");
+      });
+      Array.from(oElements).forEach((element) => {
         element.classList.remove("oLightColor");
         element.classList.add("oDarkColor");
-      }
-    });
+      });
+    }
   }, [theme]);
 
   return (
@@ -182,8 +207,13 @@ const ChessBoard = () => {
                   if (getWinner(board, -1) === -1) {
                     changeTurnAndCheck(-1);
                   }
+                  dispatch(action.setDataBoard({ board, nextMove: 1 }));
                 } else if (modeParam === "2Player") {
                   setMove(e);
+                  console.log(currentPlayer);
+                  dispatch(
+                    action.setDataBoard({ board, nextMove: -currentPlayer })
+                  );
                 }
               }}
               id={`${i}_${j++}`}
@@ -195,7 +225,11 @@ const ChessBoard = () => {
           );
         })}
       {winner !== 0 && showResult && (
-        <GetResult result={`${winner}`} mode={`${modeParam}`} />
+        <GetResult
+          uncomplete={dataBoard ? idParam : null}
+          result={`${winner}`}
+          mode={`${modeParam}`}
+        />
       )}
     </div>
   );

@@ -5,6 +5,10 @@ import { LuCircle } from "react-icons/lu";
 import { HiOutlineDesktopComputer } from "react-icons/hi";
 import { LiaUserFriendsSolid } from "react-icons/lia";
 import { GiImperialCrown, GiJewelCrown, GiQueenCrown } from "react-icons/gi";
+import { FaPen } from "react-icons/fa6";
+import { IoLogOut } from "react-icons/io5";
+import { FaUser } from "react-icons/fa";
+import { IoMdSettings } from "react-icons/io";
 const X = ({ color }) => {
   return (
     <RxCross1
@@ -61,6 +65,24 @@ const bronzeCrown = () => {
     />
   );
 };
+
+const editButton = (props) => {
+  return (
+    <FaPen size={props.size} className="hover:opacity-60 cursor-pointer" />
+  );
+};
+
+const logoutButton = (props) => {
+  return <IoLogOut size={props.size} color={props.color} />;
+};
+
+const userIcon = (props) => {
+  return <FaUser size={props.size} color={props.color} />;
+};
+
+const settingIcon = (props) => {
+  return <IoMdSettings size={props.size} color={props.color} />;
+};
 export {
   AiFillEyeInvisible,
   AiFillEye,
@@ -71,4 +93,8 @@ export {
   silverCrown,
   goldCrown,
   bronzeCrown,
+  editButton,
+  logoutButton,
+  userIcon,
+  settingIcon,
 };

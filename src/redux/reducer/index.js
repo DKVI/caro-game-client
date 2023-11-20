@@ -12,6 +12,8 @@ const init = {
   score: 0,
   id: "",
   start_times: "",
+  data: {},
+  next_move: 0,
 };
 
 const rootReducer = (state = init, action) => {
@@ -72,6 +74,19 @@ const rootReducer = (state = init, action) => {
       return {
         ...state,
         start_times: startTime,
+      };
+    case "SET_DATA_BOARD":
+      const { board, nextMove } = action.payload;
+      console.log(nextMove);
+      return {
+        ...state,
+        data: board,
+        next_move: nextMove,
+      };
+    case "GET_RANDOM_AVT":
+      return {
+        ...state,
+        avatar: "https://random.imagecdn.app/200/200",
       };
     default:
       return state;
