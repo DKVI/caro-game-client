@@ -185,7 +185,7 @@ const Header = () => {
                     boxShadow: "0px 4px 4px #cccc",
                   }}
                   onClick={() => {
-                    return navigate("/setting");
+                    return navigate("/user");
                   }}
                 >
                   Manage your account

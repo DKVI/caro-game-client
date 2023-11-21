@@ -149,6 +149,20 @@ const getAvt = async () => {
   });
 };
 
+const updateInfo = async (body) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch("/auth/updateInfo", body, {
+        headers: {
+          Authorization: "Bearer " + getTokenFromCookie(),
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
+
 export {
   register,
   login,
@@ -161,4 +175,5 @@ export {
   updateGame,
   logout,
   getAvt,
+  updateInfo,
 };
