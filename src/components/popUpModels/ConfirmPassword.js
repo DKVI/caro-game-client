@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import * as API from "../../axios/API/index";
 import { useState } from "react";
+import SpinnerLoading from "../loading";
+import { useNavigate } from "react-router-dom";
 
 const ConfirmPassword = (props) => {
   const action = props.action;
@@ -9,9 +11,24 @@ const ConfirmPassword = (props) => {
   const body = props.body;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+  const [pending, setPending] = useState(false);
+  const logout = () => {
+    setPending(true);
+    API.logout()
+      .then(() => {
+        document.cookie = "token" + `=; expires=Thu, ${Date.now()} ; path=/;`;
+        setTimeout(() => {
+          setPending(false);
+          navigate("/Login");
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Logout failure!");
+      });
+  };
   const handleAction = (action) => {
-    console.log(user);
-    console.log(body);
     if (password === confirmPassword) {
       switch (action) {
         case "CHANGE_INFO":
@@ -32,7 +49,15 @@ const ConfirmPassword = (props) => {
               console.log(err);
             });
           return;
-
+        case "CHANGE_PASSWORD":
+          API.changePassword({ password: props.body.password })
+            .then((res) => {
+              alert("Update password successfully, please login again!");
+              logout();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         default:
           return;
       }
@@ -87,6 +112,7 @@ const ConfirmPassword = (props) => {
           </button>
         </div>
       </div>
+      {pending && <SpinnerLoading />}
     </motion.div>
   );
 };

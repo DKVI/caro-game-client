@@ -163,6 +163,20 @@ const updateInfo = async (body) => {
   });
 };
 
+const changePassword = async (body) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .patch("/auth/changePassword", body, {
+        headers: {
+          Authorization: "Bearer " + getTokenFromCookie(),
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => resolve(res))
+      .catch((err) => reject(err));
+  });
+};
+
 export {
   register,
   login,
@@ -176,4 +190,5 @@ export {
   logout,
   getAvt,
   updateInfo,
+  changePassword,
 };
