@@ -15,7 +15,7 @@ const GetResult = (props) => {
   const player2Name = useSelector((state) => state.player2);
   const time = useSelector((state) => state.time);
   const mode = useSelector((state) => state.mode);
-  const startTime = useSelector((state) => state.start_time);
+  const startTime = useSelector((state) => state.start_times);
   const navigate = useNavigate();
   function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
