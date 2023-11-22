@@ -1,7 +1,7 @@
 import { UseSelector, useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, memo } from "react";
+import { useEffect, memo, useState } from "react";
 import SpinnerLoading from "../loading";
 import * as API from "../../axios/API/index";
 import * as action from "../../redux/action";
@@ -16,6 +16,7 @@ const GetResult = (props) => {
   const time = useSelector((state) => state.time);
   const mode = useSelector((state) => state.mode);
   const startTime = useSelector((state) => state.start_times);
+  const [pending, setPending] = useState(false);
   const navigate = useNavigate();
   function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
@@ -27,7 +28,8 @@ const GetResult = (props) => {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
 
-  function doneGame(e) {
+  function doneGame(target) {
+    setPending(true);
     API.findGame(idParam)
       .then((res) => {
         if (res.data.game.length === 0) {
@@ -43,8 +45,8 @@ const GetResult = (props) => {
             data: "{}",
             nextmove: null,
           }).then(() => {
-            if (e.target.closest(".home-btn")) return navigate("/dashboard");
-            else if (e.target.closest(".replay-btn")) return navigate("/game");
+            setPending(false);
+            navigate(target);
           });
         } else {
           API.updateGame(idParam, {
@@ -57,9 +59,9 @@ const GetResult = (props) => {
             status: "done",
             data: "{}",
             nextmove: null,
-          }).then((res) => {
-            if (e.target.closest(".home-btn")) return navigate("/dashboard");
-            else if (e.target.closest(".replay-btn")) return navigate("/game");
+          }).then(() => {
+            setPending(false);
+            navigate(target);
           });
         }
       })
@@ -105,25 +107,26 @@ const GetResult = (props) => {
               <div>Play times: {formatTime(time)}</div>
               <div>Score: {result === "1" ? 100 : -50}</div>
               <div className="flex justify-around gap-3">
-                <Link
-                  className="px-2 py-1 bg-red text-white font-bold rounded-md hover:opacity-[0.6] home-btn"
-                  onClick={(e) => {
-                    doneGame(e);
+                <div
+                  className="px-2 py-1 bg-red text-white font-bold rounded-md hover:opacity-[0.6] home-btn cursor-pointer"
+                  onClick={() => {
+                    doneGame("/dashboard");
                   }}
                 >
                   HOME
-                </Link>
-                <Link
-                  className="px-2 py-1 bg-blue text-white font-bold rounded-md hover:opacity-[0.6] replay-btn"
-                  onClick={(e) => {
-                    doneGame(e);
+                </div>
+                <div
+                  className="px-2 py-1 bg-blue text-white font-bold rounded-md hover:opacity-[0.6] replay-btn cursor-pointer"
+                  onClick={() => {
+                    doneGame("/game");
                   }}
                 >
                   REPLAY
-                </Link>
+                </div>
               </div>
             </div>
           </div>
+          {pending && <SpinnerLoading />}
         </motion.div>
       ) : (
         <SpinnerLoading />

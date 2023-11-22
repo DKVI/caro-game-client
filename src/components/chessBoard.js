@@ -133,6 +133,7 @@ const ChessBoard = (props) => {
       fillBoardElement();
     }
     dispatch(action.setMode(modeParam));
+
   }, []);
   useEffect(() => {
     setTimeout(() => {
