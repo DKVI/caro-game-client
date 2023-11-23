@@ -1,6 +1,6 @@
 import axios from "axios";
 const axiosInstance = axios.create({
-  baseURL: "https://game-caro-api.vercel.app/api/v1",
+  baseURL: "",
 });
 
 export default axiosInstance;

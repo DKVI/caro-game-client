@@ -4,9 +4,9 @@ import SpinnerLoading from "../components/loading";
 import Header from "../components/header/Header";
 import lightGif from "../assets/images/light.gif";
 import darkGif from "../assets/images/dark.gif";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { color, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 import Chart from "react-google-charts";
 import { games, user } from "../demoData";
 import * as icon from "../icon/index";
@@ -35,11 +35,16 @@ const DashboardPage = () => {
   };
   const [currentUser, setCurrentUser] = useState(null);
   const [history, setHistory] = useState(null);
-  const [dataChart, setDataChart] = useState([]);
+  const [dataChart, setDataChart] = useState([
+    ["Task", "Hours per Day"],
+    ["Win", 0],
+    ["Lose", 0],
+  ]);
   const [optionChart, setOptionChart] = useState({});
   const [allUsers, setAllUsers] = useState([]);
   const username = useSelector((state) => state.username);
   const updateAllScore = async () => {
+    console.log(dataChart);
     await API.updateAllScore()
       .then((res) => {
         console.log(res);
@@ -59,7 +64,9 @@ const DashboardPage = () => {
         console.log(err);
       });
   };
-
+  useEffect(() => {
+    console.log(dataChart);
+  }, [dataChart]);
   const getCurrentUser = () => {
     return new Promise((resolve, reject) => {
       API.getUser()
@@ -171,11 +178,14 @@ const DashboardPage = () => {
                   {currentUser ? (
                     <div
                       className={`flex gap-2 w-full h-[50px]  ${
-                        currentUser.rank == 1 && "border-[4px] border-[#FFD700]"
+                        currentUser.rank === 1 &&
+                        "border-[4px] border-[#FFD700]"
                       } ${
-                        currentUser.rank == 2 && "border-[4px] border-[#C0C0C0]"
+                        currentUser.rank === 2 &&
+                        "border-[4px] border-[#C0C0C0]"
                       } ${
-                        currentUser.rank == 3 && "border-[4px] border-[#CD7F32]"
+                        currentUser.rank === 3 &&
+                        "border-[4px] border-[#CD7F32]"
                       }`}
                       style={{
                         boxShadow: "2px 2px 10px 3px #cccc",
@@ -231,7 +241,7 @@ const DashboardPage = () => {
                       </div>
                     </div>
                   ) : (
-                    <Skeleton className="flex flex-col gap-2 w-full" />
+                    <Skeleton className="flex flex-col gap-2 w-full h-[40px]" />
                   )}
                 </div>
               </div>
@@ -242,77 +252,79 @@ const DashboardPage = () => {
                 }}
               >
                 <div className="flex flex-col">
-                  {allUsers ? (
-                    Array.from(allUsers).map((item, index) => {
-                      const rank = index + 1;
-                      return (
-                        <div
-                          key={index}
-                          className={`w-full rounded-md flex-none mt-2 px-3 py-3 flex  ${
-                            index + 1 == 1 && "border-[4px] border-[#FFD700]"
-                          } ${
-                            index + 1 == 2 && "border-[4px] border-[#C0C0C0]"
-                          } ${
-                            index + 1 == 3 && "border-[4px] border-[#CD7F32]"
-                          }`}
-                          style={{
-                            boxShadow: "2px 2px 10px 3px #cccc",
-                          }}
-                        >
-                          {index + 1 === 1 && (
-                            <div className="w-1/5 flex align-middle">
-                              <icon.goldCrown />
+                  {allUsers.length !== 0
+                    ? Array.from(allUsers).map((item, index) => {
+                        const rank = index + 1;
+                        return (
+                          <div
+                            key={index}
+                            className={`w-full rounded-md flex-none mt-2 px-3 py-3 flex  ${
+                              index + 1 === 1 && "border-[4px] border-[#FFD700]"
+                            } ${
+                              index + 1 === 2 && "border-[4px] border-[#C0C0C0]"
+                            } ${
+                              index + 1 === 3 && "border-[4px] border-[#CD7F32]"
+                            }`}
+                            style={{
+                              boxShadow: "2px 2px 10px 3px #cccc",
+                            }}
+                          >
+                            {index + 1 === 1 && (
+                              <div className="w-1/5 flex align-middle">
+                                <icon.goldCrown />
+                              </div>
+                            )}
+                            {index + 1 === 2 && (
+                              <div className="w-1/5 flex align-middle">
+                                <icon.silverCrown />
+                              </div>
+                            )}
+                            {index + 1 === 3 && (
+                              <div className="w-1/5 flex align-middle">
+                                <icon.bronzeCrown />
+                              </div>
+                            )}
+                            {index + 1 > 3 && (
+                              <div
+                                className="w-1/5 flex align-middle"
+                                style={{
+                                  filter: "drop-shadow(2px 4px 1px #cccc)",
+                                }}
+                              >
+                                <div
+                                  className="m-auto"
+                                  style={{
+                                    filter: "drop-shadow(2px 4px 1px #cccc)",
+                                  }}
+                                >
+                                  {index + 1}
+                                </div>
+                              </div>
+                            )}
+                            <div
+                              className="w-3/5 flex align-middle"
+                              style={{
+                                filter: "drop-shadow(2px 4px 1px #cccc)",
+                              }}
+                            >
+                              {item.USERNAME}{" "}
                             </div>
-                          )}
-                          {index + 1 === 2 && (
-                            <div className="w-1/5 flex align-middle">
-                              <icon.silverCrown />
-                            </div>
-                          )}
-                          {index + 1 === 3 && (
-                            <div className="w-1/5 flex align-middle">
-                              <icon.bronzeCrown />
-                            </div>
-                          )}
-                          {index + 1 > 3 && (
                             <div
                               className="w-1/5 flex align-middle"
                               style={{
                                 filter: "drop-shadow(2px 4px 1px #cccc)",
                               }}
                             >
-                              <div
-                                className="m-auto"
-                                style={{
-                                  filter: "drop-shadow(2px 4px 1px #cccc)",
-                                }}
-                              >
-                                {index + 1}
-                              </div>
+                              {item.SCORE}
                             </div>
-                          )}
-                          <div
-                            className="w-3/5 flex align-middle"
-                            style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
-                            }}
-                          >
-                            {item.USERNAME}{" "}
                           </div>
-                          <div
-                            className="w-1/5 flex align-middle"
-                            style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
-                            }}
-                          >
-                            {item.SCORE}
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <Skeleton className="w-full rounded-md flex-none mt-2 px-3 py-3 flex" />
-                  )}
+                        );
+                      })
+                    : Array(10)
+                        .fill(0)
+                        .map((item, index) => (
+                          <Skeleton className="w-full rounded-md flex-none mt-2 px-3 py-3 flex h-[40px]" />
+                        ))}
                 </div>
               </div>
             </motion.div>
@@ -341,14 +353,44 @@ const DashboardPage = () => {
                 </h1>
 
                 <div className="w-[100%] h-[80%] m-auto">
-                  <Chart
+                  {/* <Chart
                     className="rounded-lg"
                     chartType="PieChart"
                     data={dataChart}
                     width="100%"
                     height="100%"
                     options={optionChart}
-                  />
+                  /> */}
+                  {dataChart[1][1] === 0 && dataChart[2][1] === 0 ? (
+                    <div className="w-full h-full flex justify-center items-center flex-col gap-5">
+                      <div>Have no data</div>
+                      <motion.div
+                        whileHover={{
+                          scale: 1.2,
+                        }}
+                        className={`py-1 px-2 text-white rounded-xl font-bold cursor-pointer ${
+                          theme === "day" ? "bg-light" : "bg-night"
+                        }`}
+                        style={{
+                          boxShadow: "0px 3px 3px 3px #cccc",
+                        }}
+                        onClick={() => {
+                          return navigate("/game");
+                        }}
+                      >
+                        Play now!
+                      </motion.div>
+                    </div>
+                  ) : (
+                    <Chart
+                      className="rounded-lg"
+                      chartType="PieChart"
+                      data={dataChart}
+                      width="100%"
+                      height="100%"
+                      options={optionChart}
+                    />
+                  )}
                 </div>
               </motion.div>
               <motion.div
@@ -380,68 +422,111 @@ const DashboardPage = () => {
                   }}
                 >
                   <div className="flex flex-col gap-2">
-                    {history ? (
-                      Array.from(history).map((item, index) => (
-                        <div
-                          key={index}
-                          className={`w-full rounded-md flex-none mt-2 px-3 py-3 flex relative ${
-                            item.SCORE === 0 &&
-                            `border-4 ${
-                              theme === "night" ? "border-dark" : "border-light"
-                            } cursor-pointer`
-                          }`}
-                          onClick={(e) => {
-                            if (e.target.closest(".cursor-pointer")) {
-                              localStorage.setItem(
-                                "data",
-                                JSON.stringify({
-                                  ID: item.ID,
-                                  OPPONENT_NAME: item.OPPONENT_NAME,
-                                  DATA: item.DATA,
-                                  NEXTMOVE: item.NEXTMOVE,
-                                  PLAY_TIME: item.PLAY_TIME,
-                                })
-                              );
-                              if (item.OPPONENT_NAME !== "CPU") {
-                                return navigate(
-                                  `/game?mode=2Player&2PlayerName=${item.OPPONENT_NAME}&id=${item.ID}`
-                                );
-                              } else {
-                                return navigate(`/game?mode=CPU&id=${item.ID}`);
-                              }
-                            }
-                          }}
-                          style={{
-                            boxShadow: "2px 2px 10px 3px #cccc",
-                          }}
-                        >
-                          {item.SCORE === 0 && (
-                            <motion.div
-                              whileHover={{
-                                opacity: 1,
-                              }}
-                              className={`w-full opacity-0 h-full ${
-                                theme === "night" ? "bg-dark" : "bg-light"
-                              } absolute left-0 right-0 top-0 bottom-0 z-40 flex overflow-hidden`}
-                            >
-                              <div className="m-auto text-white font-bold">
-                                CONTINUE?
-                              </div>
-                            </motion.div>
-                          )}
+                    {history
+                      ? Array.from(history).map((item, index) => (
                           <div
-                            className="w-1/4 flex align-middle"
+                            key={index}
+                            className={`w-full rounded-md flex-none mt-2 px-3 py-3 flex relative ${
+                              item.SCORE === 0 &&
+                              `border-4 ${
+                                theme === "night"
+                                  ? "border-dark"
+                                  : "border-light"
+                              } cursor-pointer`
+                            }`}
+                            onClick={(e) => {
+                              if (e.target.closest(".cursor-pointer")) {
+                                localStorage.setItem(
+                                  "data",
+                                  JSON.stringify({
+                                    ID: item.ID,
+                                    OPPONENT_NAME: item.OPPONENT_NAME,
+                                    DATA: item.DATA,
+                                    NEXTMOVE: item.NEXTMOVE,
+                                    PLAY_TIME: item.PLAY_TIME,
+                                  })
+                                );
+                                if (item.OPPONENT_NAME !== "CPU") {
+                                  return navigate(
+                                    `/game?mode=2Player&2PlayerName=${item.OPPONENT_NAME}&id=${item.ID}`
+                                  );
+                                } else {
+                                  return navigate(
+                                    `/game?mode=CPU&id=${item.ID}`
+                                  );
+                                }
+                              }
+                            }}
                             style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
+                              boxShadow: "2px 2px 10px 3px #cccc",
                             }}
                           >
+                            {item.SCORE === 0 && (
+                              <motion.div
+                                whileHover={{
+                                  opacity: 1,
+                                }}
+                                className={`w-full opacity-0 h-full ${
+                                  theme === "night" ? "bg-dark" : "bg-light"
+                                } absolute left-0 right-0 top-0 bottom-0 z-40 flex overflow-hidden`}
+                              >
+                                <div className="m-auto text-white font-bold">
+                                  CONTINUE?
+                                </div>
+                              </motion.div>
+                            )}
                             <div
-                              className={`m-auto font-bold ${
-                                item.SCORE !== 0
+                              className="w-1/4 flex align-middle"
+                              style={{
+                                filter: "drop-shadow(2px 4px 1px #cccc)",
+                              }}
+                            >
+                              <div
+                                className={`m-auto font-bold ${
+                                  item.SCORE !== 0
+                                    ? item.SCORE < 0
+                                      ? "text-red"
+                                      : "text-blue"
+                                    : "text-green"
+                                }`}
+                                style={{
+                                  filter: "drop-shadow(2px 4px 1px #cccc)",
+                                }}
+                              >
+                                {item.SCORE !== 0
                                   ? item.SCORE < 0
-                                    ? "text-red"
-                                    : "text-blue"
-                                  : "text-green"
+                                    ? "LOSE"
+                                    : "WIN"
+                                  : "PAUSE"}
+                              </div>
+                            </div>
+                            <div
+                              className="w-1/4 flex align-middle"
+                              style={{
+                                filter: "drop-shadow(2px 4px 1px #cccc)",
+                              }}
+                            >
+                              <div className="">
+                                {item.OPPONENT_NAME === "CPU"
+                                  ? "CPU"
+                                  : "2Player"}{" "}
+                              </div>
+                            </div>
+                            <div
+                              className="flex-none flex align-middle  w-1/4"
+                              style={{
+                                filter: "drop-shadow(2px 4px 1px #cccc)",
+                              }}
+                            >
+                              {formatTimeFromSeconds(item.PLAY_TIME)}
+                            </div>
+                            <div
+                              className={`w-1/4 flex align-middle  ${
+                                item.SCORE !== 0
+                                  ? item.SCORE > 0
+                                    ? "text-green"
+                                    : "text-red"
+                                  : "text-black"
                               }`}
                               style={{
                                 filter: "drop-shadow(2px 4px 1px #cccc)",
@@ -449,52 +534,17 @@ const DashboardPage = () => {
                             >
                               {item.SCORE !== 0
                                 ? item.SCORE < 0
-                                  ? "LOSE"
-                                  : "WIN"
-                                : "PAUSE"}
+                                  ? item.SCORE
+                                  : `+${item.SCORE}`
+                                : "no score"}
                             </div>
                           </div>
-                          <div
-                            className="w-1/4 flex align-middle"
-                            style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
-                            }}
-                          >
-                            <div className="">
-                              {item.OPPONENT_NAME === "CPU" ? "CPU" : "2Player"}{" "}
-                            </div>
-                          </div>
-                          <div
-                            className="flex-none flex align-middle  w-1/4"
-                            style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
-                            }}
-                          >
-                            {formatTimeFromSeconds(item.PLAY_TIME)}
-                          </div>
-                          <div
-                            className={`w-1/4 flex align-middle  ${
-                              item.SCORE !== 0
-                                ? item.SCORE > 0
-                                  ? "text-green"
-                                  : "text-red"
-                                : "text-black"
-                            }`}
-                            style={{
-                              filter: "drop-shadow(2px 4px 1px #cccc)",
-                            }}
-                          >
-                            {item.SCORE !== 0
-                              ? item.SCORE < 0
-                                ? item.SCORE
-                                : `+${item.SCORE}`
-                              : "no score"}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <Skeleton className="w-full rounded-md flex-none mt-2 px-3 py-3 flex" />
-                    )}
+                        ))
+                      : Array(10)
+                          .fill(0)
+                          .map((item, index) => (
+                            <Skeleton className="w-full rounded-md flex-none mt-2 px-3 py-3 flex" />
+                          ))}
                   </div>
                 </div>
               </motion.div>

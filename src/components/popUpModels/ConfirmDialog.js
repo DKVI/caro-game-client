@@ -1,13 +1,14 @@
 import { UseSelector, useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import React, { useEffect, memo } from "react";
+import React, { useEffect, memo, useState } from "react";
 import SpinnerLoading from "../loading";
 import * as API from "../../axios/API/index";
 import * as action from "../../redux/action";
 
 const ConfirmDialog = memo(({ callback, msg, action, time }) => {
   const boardData = useSelector((state) => state.data);
+  const [pending, setPending] = useState(false);
   const nextMove = useSelector((state) => state.next_move);
   const player2Name = useSelector((state) => state.player2);
   const startTime = useSelector((state) => state.start_times);
@@ -18,6 +19,7 @@ const ConfirmDialog = memo(({ callback, msg, action, time }) => {
   const idParam = searchParams.get("id");
   const navigate = useNavigate();
   function doneGame() {
+    setPending(true);
     API.findGame(idParam)
       .then((res) => {
         if (res.data.game.length === 0) {
@@ -35,6 +37,7 @@ const ConfirmDialog = memo(({ callback, msg, action, time }) => {
           })
             .then((res) => {
               alert("Save successfully! press Enter to return to Dashboard");
+              setPending(false);
               navigate("/Dashboard");
               console.log(res);
             })
@@ -56,6 +59,7 @@ const ConfirmDialog = memo(({ callback, msg, action, time }) => {
           })
             .then((res) => {
               alert("Save successfully! press Enter to return to Dashboard");
+              setPending(false);
               navigate("/Dashboard");
               console.log(res);
             })
@@ -119,6 +123,7 @@ const ConfirmDialog = memo(({ callback, msg, action, time }) => {
             </button>
           </div>
         </div>
+        {pending && <SpinnerLoading />}
       </motion.div>
     </div>
   );

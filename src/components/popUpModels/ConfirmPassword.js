@@ -29,6 +29,7 @@ const ConfirmPassword = (props) => {
       });
   };
   const handleAction = (action) => {
+    setPending(true);
     if (password === confirmPassword) {
       switch (action) {
         case "CHANGE_INFO":
@@ -40,6 +41,7 @@ const ConfirmPassword = (props) => {
                 API.updateInfo(body)
                   .then((res) => {
                     alert("Update successfully, reload to apply change!");
+                    setPending(false);
                     window.location.reload();
                   })
                   .catch((err) => console.log(err));
@@ -53,6 +55,7 @@ const ConfirmPassword = (props) => {
           API.changePassword({ password: props.body.password })
             .then((res) => {
               alert("Update password successfully, please login again!");
+              setPending(false);
               logout();
             })
             .catch((err) => {
