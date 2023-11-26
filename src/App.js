@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App w-full h-full">
       <Routes>
-        <Route exact path="/" element={<LoginPage />} />
+        <Route exact path="/" element={<DashboardPage />} />
         <Route exact path="/login" element={<LoginPage />} />
         <Route exact path="/dashboard" element={<DashboardPage />} />
         <Route exact path="/game" element={<GamePage />} />

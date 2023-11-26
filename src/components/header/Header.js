@@ -79,6 +79,7 @@ const ConfirmLogout = (props) => {
 
 const Header = () => {
   const navigate = useNavigate();
+  const url = window.location.pathname;
   const [isLogout, setIsLogout] = useState(false);
   const avt = useSelector((state) => state.avatar);
   const dispatch = useDispatch();
@@ -100,6 +101,7 @@ const Header = () => {
     >
       <div className="nav-container flex gap-6">
         <NavLink
+          className={`${url === "/" ? "active" : null}`}
           to="/dashboard"
           style={{
             color: "white",

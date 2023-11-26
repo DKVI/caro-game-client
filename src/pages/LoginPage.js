@@ -182,6 +182,7 @@ const LoginPage = () => {
       console.log(formData);
       API.login(formData)
         .then((res) => {
+          console.log(res);
           addTokenToCookie(res.data.token);
           setPending((prev) => false);
           alert("Đăng nhập thành công!");
