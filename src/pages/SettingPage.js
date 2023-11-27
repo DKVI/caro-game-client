@@ -25,7 +25,7 @@ const ConfirmLogout = (props) => {
         setTimeout(() => {
           setPending(false);
           navigate("/Login");
-        }, 2000);
+        }, 500);
       })
       .catch((err) => {
         console.log(err);
@@ -34,7 +34,7 @@ const ConfirmLogout = (props) => {
   };
   return (
     <motion.div
-      className="w-screen fixed top-[60px] left-0 bottom-0 right-0 flex z-40"
+      className="w-screen fixed top-0 left-0 bottom-0 right-0 flex z-50"
       style={{
         backgroundColor: "rgba(0,0,0,0.5)",
       }}
@@ -159,7 +159,7 @@ const SettingPage = () => {
     <>
       <Header />
       <div
-        className="w-full h-[calc(100vh-60px)] py-10 px-12 "
+        className="w-full h-full py-10 px-12 "
         style={{
           backgroundImage: `url(${gifBackground})`,
           backgroundSize: "cover",
@@ -218,7 +218,7 @@ const SettingPage = () => {
             <div className="navigation mt-16 flex flex-col gap-5 px-6">
               {
                 <motion.div
-                  className="rounded-lg text-[14px] p-3 cursor-pointer w-[70%] relative"
+                  className="rounded-lg p-3 cursor-pointer w-[70%] relative"
                   style={{
                     boxShadow: "0px 3px 3px 3px #cccc",
                   }}
@@ -248,7 +248,7 @@ const SettingPage = () => {
                 </motion.div>
               }
               <motion.div
-                className="rounded-lg text-[14px] p-3 cursor-pointer w-[70%] relative"
+                className="rounded-lg p-3 cursor-pointer w-[70%] relative"
                 style={{
                   boxShadow: "0px 3px 3px 3px #cccc",
                 }}
@@ -322,7 +322,7 @@ const SettingPage = () => {
                   </div>
                 </div>
                 <div
-                  className="w-[90%] p-10 mt-10 mx-5  flex flex-col gap-5 rounded-2xl relative overflow-hidden"
+                  className="w-[90%] p-5 mt-10 mx-5  flex flex-col gap-5 rounded-2xl relative overflow-hidden"
                   style={{
                     boxShadow: "rgba(204, 204, 204, 0.8) 0px 3px 3px 3px",
                   }}

@@ -21,7 +21,7 @@ const ConfirmPassword = (props) => {
         setTimeout(() => {
           setPending(false);
           navigate("/Login");
-        }, 2000);
+        }, 500);
       })
       .catch((err) => {
         console.log(err);
@@ -72,7 +72,7 @@ const ConfirmPassword = (props) => {
     <motion.div
       initial={{ right: "100%" }}
       animate={{ right: 0 }}
-      className="w-full absolute left-0 right-0 top-0 bottom-0 z-50 bg-white px-10 py-5"
+      className="w-full absolute left-0 right-0 top-0 bottom-0 z-30 bg-white px-10 py-5"
     >
       <h1 className="font-bold text-[20px]">Enter password to continue!</h1>
       <div className="flex flex-col gap-5 mt-5 justify-between">

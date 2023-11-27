@@ -43,7 +43,9 @@ const ChessBoard = (props) => {
     const { row, col } = findBestMove(1, board);
     const element = document.getElementById(`${row}_${col}`);
     board[row][col] = -1;
-    element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
+    element.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg text-[14px] absolute" style="transform: translate(-50%, -50%); top: 50%; left: 50%;">
+    O
+  </div>`;
   }
 
   function setMoveX(e) {
@@ -51,7 +53,9 @@ const ChessBoard = (props) => {
     let [i, j] = id.split("_");
     console.log(i, j);
     if (insertMove === "X") {
-      e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
+      e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg text-[14px] absolute" style="transform: translate(-50%, -50%); top: 50%; left: 50%;">
+      X
+    </div>`;
       board[i][j] = 1;
     }
   }
@@ -62,7 +66,9 @@ const ChessBoard = (props) => {
     let [i, j] = id.split("_");
     console.log(i, j);
     if (currentPlayer === 1) {
-      e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg">X</div>`;
+      e.target.innerHTML = `<div class="m-auto font-bold ${xColor} x-element shadow-custom text-lg text-[14px] absolute" style="transform: translate(-50%, -50%); top: 50%; left: 50%;">
+      X
+    </div>`;
       board[i][j] = 1;
       changeTurnAndCheck(1);
       setCurrentPlayer((prev) => {
@@ -70,7 +76,9 @@ const ChessBoard = (props) => {
         return prev;
       });
     } else if (currentPlayer === -1) {
-      e.target.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg">O</div>`;
+      e.target.innerHTML = `<div class="m-auto font-bold ${oColor} o-element shadow-custom text-lg text-[14px] absolute" style="transform: translate(-50%, -50%); top: 50%; left: 50%;">
+      O
+    </div>`;
       board[i][j] = -1;
       changeTurnAndCheck(-1);
       setCurrentPlayer((prev) => {
@@ -133,7 +141,6 @@ const ChessBoard = (props) => {
       fillBoardElement();
     }
     dispatch(action.setMode(modeParam));
-
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -170,7 +177,7 @@ const ChessBoard = (props) => {
 
   return (
     <div
-      className="w-[calc(100vh-150px)] h-[calc(100vh-150px)]"
+      className="absolute top-0 left-0 right-0 bottom-0"
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(15, 1fr)",
@@ -198,7 +205,7 @@ const ChessBoard = (props) => {
                 duration: 1,
               }}
               key={index}
-              className={`w-full h-full bg-white flex board-element ease-in-out] cursor-pointer`}
+              className={`w-full h-full bg-white flex board-element ease-in-out] cursor-pointer overflow-hidden relative`}
               onClick={(e) => {
                 if (modeParam === "CPU") {
                   if (!isPlace(e)) return;

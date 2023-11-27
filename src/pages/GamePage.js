@@ -100,7 +100,7 @@ const GamePage = () => {
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
-              <div className="m-auto">
+              <div className="m-auto w-[70%] pt-[70%] relative">
                 <ChessBoard />
               </div>
             </div>
@@ -113,7 +113,7 @@ const GamePage = () => {
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
-              <div className="m-auto">
+              <div className="m-auto w-[70%] pt-[70%]  relative">
                 <ChessBoard
                   dataBoard={JSON.parse(tempData.DATA)}
                   nextMove={tempData.NEXTMOVE}
@@ -129,7 +129,7 @@ const GamePage = () => {
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
-              <div className="m-auto">
+              <div className="m-auto w-[70%] pt-[70%]  relative">
                 <ChessBoard />
               </div>
             </div>

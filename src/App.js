@@ -7,7 +7,6 @@ import GamePage from "./pages/GamePage";
 import SettingPage from "./pages/SettingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Cookies from "js-cookie";
-import { isLogin } from "./authentication";
 function App() {
   return (
     <div className="App w-full h-full">

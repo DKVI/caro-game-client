@@ -19,7 +19,7 @@ const ConfirmLogout = (props) => {
         setTimeout(() => {
           setPending(false);
           navigate("/Login");
-        }, 2000);
+        }, 500);
       })
       .catch((err) => {
         console.log(err);
@@ -28,7 +28,7 @@ const ConfirmLogout = (props) => {
   };
   return (
     <motion.div
-      className="w-screen fixed top-[60px] left-0 bottom-0 right-0 flex z-40"
+      className="w-screen fixed h-screen top-0 left-0 bottom-0 right-0 flex z-50"
       style={{
         backgroundColor: "rgba(0,0,0,0.5)",
       }}
