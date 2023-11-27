@@ -82,13 +82,13 @@ const DashboardPage = () => {
         console.log(res);
         let rank = 0;
         const user = await getCurrentUser();
-        Array.from(res.data.users).forEach((item, index) => {
-          if (item.USERNAME === user.USERNAME) rank = index + 1;
-        });
-        setCurrentUser({ rank, ...user });
 
         setAllUsers((prev) => {
           prev = normalSort(res.data.users);
+          Array.from(prev).forEach((item, index) => {
+            if (item.USERNAME === user.USERNAME) rank = index + 1;
+          });
+          setCurrentUser({ rank, ...user });
           return prev;
         });
       })
