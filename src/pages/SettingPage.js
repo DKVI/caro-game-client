@@ -201,14 +201,14 @@ const SettingPage = () => {
                 <div className="flex gap-5">
                   {editName ? (
                     <input
-                      className={`${color} text-[30px] font-bold full-name-input border-2 border-black w-[80%]`}
+                      className={`${color} text-[24px] font-bold full-name-input border-2 border-black w-[80%]`}
                       value={name}
                       onChange={(e) => {
                         setName(e.target.value);
                       }}
                     />
                   ) : (
-                    <div className={`${color} text-[30px] font-bold`}>
+                    <div className={`${color} text-[24px] font-bold`}>
                       {name}
                     </div>
                   )}
@@ -218,7 +218,7 @@ const SettingPage = () => {
             <div className="navigation mt-16 flex flex-col gap-5 px-6">
               {
                 <motion.div
-                  className="rounded-lg text-[16px] p-3 cursor-pointer w-[70%] relative"
+                  className="rounded-lg text-[14px] p-3 cursor-pointer w-[70%] relative"
                   style={{
                     boxShadow: "0px 3px 3px 3px #cccc",
                   }}
@@ -248,7 +248,7 @@ const SettingPage = () => {
                 </motion.div>
               }
               <motion.div
-                className="rounded-lg text-[16px] p-3 cursor-pointer w-[70%] relative"
+                className="rounded-lg text-[14px] p-3 cursor-pointer w-[70%] relative"
                 style={{
                   boxShadow: "0px 3px 3px 3px #cccc",
                 }}
@@ -281,7 +281,7 @@ const SettingPage = () => {
                 whileHover={{
                   scale: 1.2,
                 }}
-                className="rounded-lg text-[16px] p-3 cursor-pointer w-[70%] relative"
+                className="rounded-lg text-[14px] p-3 cursor-pointer w-[70%] relative"
                 style={{
                   boxShadow: "0px 3px 3px 3px #cccc",
                 }}
@@ -390,7 +390,7 @@ const SettingPage = () => {
                   {!editInfo && (
                     <div className="flex gap-3 items-center">
                       <button
-                        className=" cursor-pointer px-2 py-1 bg-blue text-white rounded-xl"
+                        className=" cursor-pointer px-5 py-2 bg-blue text-white rounded-xl"
                         onClick={() => {
                           setEditInfo(true);
                         }}
