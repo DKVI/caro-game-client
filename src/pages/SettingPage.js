@@ -522,6 +522,7 @@ const SettingPage = () => {
                       <div className="w-full h-[100px] relative">
                         {isChangePassword && (
                           <ConfirmPassword
+                            user={user}
                             action={"CHANGE_PASSWORD"}
                             body={{ password: newPassword }}
                             callback={() => {

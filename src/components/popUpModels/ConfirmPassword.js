@@ -29,8 +29,8 @@ const ConfirmPassword = (props) => {
       });
   };
   const handleAction = (action) => {
-    setPending(true);
     if (password === confirmPassword) {
+      setPending(true);
       switch (action) {
         case "CHANGE_INFO":
           API.login({ username: user.USERNAME, password: password })
@@ -46,20 +46,29 @@ const ConfirmPassword = (props) => {
                   })
                   .catch((err) => console.log(err));
               }
+              console.log(res);
             })
             .catch((err) => {
-              console.log(err);
+              setPending(false);
+              alert("Password is wrong, please try again!");
             });
           return;
         case "CHANGE_PASSWORD":
-          API.changePassword({ password: props.body.password })
+          API.login({ username: user.USERNAME, password: password })
             .then((res) => {
-              alert("Update password successfully, please login again!");
-              setPending(false);
-              logout();
+              API.changePassword({ password: props.body.password })
+                .then((res) => {
+                  alert("Update password successfully, please login again!");
+                  setPending(false);
+                  logout();
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             })
             .catch((err) => {
-              console.log(err);
+              setPending(false);
+              alert("Password is wrong, please try again!");
             });
         default:
           return;

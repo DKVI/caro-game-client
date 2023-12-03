@@ -129,7 +129,7 @@ const GamePage = () => {
           <>
             <div className="w-1/5 h-full"></div>
             <div className="w-3/5 h-full flex">
-              <div className="m-auto w-[70%] pt-[70%]  relative">
+              <div className="m-auto w-[70%] pt-[70%] relative">
                 <ChessBoard />
               </div>
             </div>

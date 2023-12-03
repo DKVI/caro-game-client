@@ -126,7 +126,6 @@ const updateGame = async (ID, body) => {
 };
 
 const logout = async () => {
-  console.log(getTokenFromCookie);
   return new Promise((resolve, reject) => {
     axios
       .post("/auth/logout", {
