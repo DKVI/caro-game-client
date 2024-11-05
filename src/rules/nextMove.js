@@ -262,4 +262,4 @@ function minimax(depth, isMaximizingPlayer, alpha, beta, board) {
   }
 }
 
-export { makeMove, findBestMove };
+module.exports = { makeMove, findBestMove };

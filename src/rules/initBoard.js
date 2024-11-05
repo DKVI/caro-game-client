@@ -6,4 +6,4 @@ function initializeBoard(BOARD_SIZE) {
   return board;
 }
 
-export default initializeBoard;
+module.exports = initializeBoard;
